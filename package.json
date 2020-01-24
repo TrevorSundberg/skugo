@@ -11,9 +11,13 @@
     "type": "git",
     "url": "git+https://github.com/TrevorSundberg/skugo.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "ssh",
+    "remote",
+    "web"
+  ],
+  "author": "Trevor Sundberg",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/TrevorSundberg/skugo/issues"
   },
