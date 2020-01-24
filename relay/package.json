@@ -1,12 +1,7 @@
 {
-  "name": "skugo",
+  "name": "relay",
   "version": "1.0.0",
   "main": "bin/index.js",
-  "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TrevorSundberg/skugo.git"
-  },
   "scripts": {
     "start": "node bin/index.js"
   },
