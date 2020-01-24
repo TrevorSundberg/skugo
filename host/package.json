@@ -1,0 +1,16 @@
+{
+  "name": "host",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Trevor Sundberg",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ssh2": "^0.5.39",
+    "node-pty": "^0.9.0",
+    "ssh2": "^0.8.7"
+  }
+}

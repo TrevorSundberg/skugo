@@ -4,7 +4,8 @@
   "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
   "main": ".eslintrc.js",
   "scripts": {
-    "build-relay": "cd relay && eslint src/* && tsc",
+    "build-host": "cd host && npm install --no-progress && eslint src/* && tsc",
+    "build-relay": "cd relay && npm install --no-progress && eslint src/* && tsc",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy"
   },
   "repository": {
