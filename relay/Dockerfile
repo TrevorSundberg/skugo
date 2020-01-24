@@ -6,6 +6,6 @@ COPY bin ./bin/
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm install
+RUN npm install --production --no-optional --no-progress --no-audit
 
 CMD npm start
