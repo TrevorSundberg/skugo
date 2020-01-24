@@ -4,7 +4,7 @@ node_js:
 install:
 - npm install
 script:
-- npm run build
+- npm run build-all
 deploy:
   provider: pages
   local_dir: ./client/bin
