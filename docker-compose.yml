@@ -1,0 +1,8 @@
+version: '3'
+services:
+  www:
+    ports:
+      - '80:80'
+    build:
+      context: .
+    restart: always
