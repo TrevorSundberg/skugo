@@ -1,0 +1,29 @@
+{
+  "name": "skugo",
+  "version": "1.0.0",
+  "main": "bin/index.js",
+  "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TrevorSundberg/skugo.git"
+  },
+  "scripts": {
+    "build": "eslint src/* && tsc",
+    "start": "node bin/index.js"
+  },
+  "keywords": [
+    "ssh",
+    "remote",
+    "web"
+  ],
+  "author": "Trevor Sundberg",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ws": "^7.2.0",
+    "typescript": "^3.7.5",
+    "ws": "^7.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  }
+}

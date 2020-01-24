@@ -12,7 +12,7 @@
     "baseUrl": "./",
     "outDir": "bin",
     "paths": {
-      "components/*": [
+      "src/*": [
         "src/*"
       ],
     }
