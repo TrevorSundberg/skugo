@@ -6,5 +6,9 @@
   "scripts": {},
   "author": "Trevor Sundberg",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "xterm": "^4.3.0",
+    "xterm-addon-search": "^0.4.0",
+    "xterm-addon-web-links": "^0.2.1"
+  }
 }
