@@ -2,7 +2,7 @@ import "xterm/css/xterm.css";
 import {SearchAddon} from "xterm-addon-search";
 import {Terminal} from "xterm";
 import {WebLinksAddon} from "xterm-addon-web-links";
-import {getWebSocketUrl} from "../../shared";
+import {getWebSocketUrl} from "../../shared/urls";
 
 const terminal = new Terminal();
 terminal.loadAddon(new WebLinksAddon());

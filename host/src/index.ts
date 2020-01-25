@@ -1,5 +1,5 @@
-import {Deferred, sequence} from "./utility";
-import {getPageUrl, getWebSocketUrl} from "../../shared";
+import {Deferred, sequence} from "../../shared/utility";
+import {getPageUrl, getWebSocketUrl} from "../../shared/urls";
 import {SshServer} from "./ssh";
 import WebSocket from "ws";
 import net from "net";
