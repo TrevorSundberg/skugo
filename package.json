@@ -6,9 +6,9 @@
   "scripts": {
     "build-client": "cd client && npm install --no-progress && eslint src/* && rm -rf ./bin && webpack --mode production",
     "start-client": "cd client && node --max_old_space_size=8192 ../node_modules/.bin/webpack-dev-server --mode development --open --hot",
-    "build-host": "cd host && npm install --no-progress && eslint src/* && tsc",
+    "build-host": "cd host && npm install --no-progress && eslint src/* && rm -rf ./bin && tsc",
     "start-host": "npm run build-host && NODE_ENV=dev node ./host/bin/host/src/index.js",
-    "build-relay": "cd relay && npm install --no-progress && eslint src/* && tsc",
+    "build-relay": "cd relay && npm install --no-progress && eslint src/* && rm -rf ./bin && tsc",
     "start-relay": "npm run build-relay && cd relay && docker build -t relay . && docker run --rm -p 80:80 relay",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy",
     "build-all": "npm run build-client && npm run build-host && npm run build-relay"
