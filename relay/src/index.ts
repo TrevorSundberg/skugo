@@ -6,21 +6,23 @@ const wss = new WebSocket.Server({
 
 const pairs: Record<string, WebSocket[]> = {};
 
-wss.on("connection", (socket, request) => {
+wss.on("connection", (ws, request) => {
+  const {socket} = request;
   const searchParams = new URLSearchParams(request.url.slice(1));
   const id = searchParams.get("id");
-  console.log(`Connection from ${request.socket.remoteAddress}:${request.socket.remotePort} with id ${id}`);
   if (!id) {
-    socket.close(1000, "No id provided");
+    console.log(`Rejected ${socket.remoteAddress}:${socket.remotePort} (no id)`);
+    ws.close(1000, "No id provided");
     return;
   }
+  console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
   const sockets = pairs[id] || [];
-  sockets.push(socket);
+  sockets.push(ws);
   pairs[id] = sockets;
 
-  socket.on("message", (data) => {
+  ws.on("message", (data) => {
     for (const otherSocket of sockets) {
-      if (otherSocket !== socket) {
+      if (otherSocket !== ws) {
         if (otherSocket.readyState === WebSocket.OPEN) {
           otherSocket.send(data);
           console.log(data);
@@ -30,17 +32,19 @@ wss.on("connection", (socket, request) => {
   });
 
   const onClose = () => {
-    socket.close();
-    const index = sockets.indexOf(socket);
+    console.log(`Disconnected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
+    ws.close();
+    const index = sockets.indexOf(ws);
     if (index !== -1) {
       sockets.splice(index, 1);
     }
 
     if (sockets.length === 0) {
       delete pairs[id];
+      console.log(`All connections for ${id} closed`);
     }
   };
 
-  socket.on("close", onClose);
-  socket.on("error", onClose);
+  ws.on("close", onClose);
+  ws.on("error", onClose);
 });
