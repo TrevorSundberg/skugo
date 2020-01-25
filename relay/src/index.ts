@@ -48,16 +48,18 @@ wss.on("connection", (ws, request) => {
   const {socket} = request;
   const searchParams = new URLSearchParams(request.url.slice(1));
   const id = searchParams.get("id");
+  const close = (reason: string) => {
+    console.log(`Closed ${socket.remoteAddress}:${socket.remotePort} '${id}' [${client}]: ${reason}`);
+    ws.close(1000, reason);
+  };
   if (!id) {
-    console.log(`Rejected ${socket.remoteAddress}:${socket.remotePort} (no id)`);
-    ws.close(1000, "No id provided");
+    close("Both id and type are required");
     return;
   }
   console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
   const connection = pairs[id] || new Connection();
-  if (!connection.addPeer(ws)) {
-    console.log(`Rejected ${socket.remoteAddress}:${socket.remotePort} (two already connected)`);
-    ws.close(1000, "Two peers already connected");
+  if (!connection.addPeer(type, ws)) {
+    close("Two peers already connected");
     return;
   }
   pairs[id] = connection;
@@ -67,8 +69,7 @@ wss.on("connection", (ws, request) => {
   });
 
   const onClose = () => {
-    console.log(`Disconnected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
-    ws.close();
+    close("Disconnected");
     delete pairs[id];
   };
 
