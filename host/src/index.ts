@@ -8,7 +8,7 @@ import {uuid} from "uuidv4";
 const pty: typeof import("node-pty") = require("node-pty");
 
 const id = uuid();
-const wsUrl = `${getWebSocketUrl()}?id=${id}`;
+const wsUrl = getWebSocketUrl(id, "host");
 const pageUrl = `${getPageUrl()}?id=${id}`;
 console.log(pageUrl);
 const ws = new WebSocket(wsUrl);

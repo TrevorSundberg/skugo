@@ -18,7 +18,7 @@ const searchParams = new URLSearchParams(location.search);
 if (!searchParams.get("id")) {
   throw new Error("No id provided");
 }
-const wsUrl = `${getWebSocketUrl()}?id=${searchParams.get("id")}`;
+const wsUrl = getWebSocketUrl(searchParams.get("id"), "client");
 const ws = new WebSocket(wsUrl);
 ws.addEventListener("open", () => {
   const send = <T extends Message>(msg: T) => {

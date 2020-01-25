@@ -1,4 +1,5 @@
 import {Deferred, sequence} from "../../shared/utility";
+import {PeerType} from "../../shared/urls";
 import WebSocket from "ws";
 
 const wss = new WebSocket.Server({
@@ -6,6 +7,8 @@ const wss = new WebSocket.Server({
 }, () => console.log("Relay server started"));
 
 class Peer {
+  public type: PeerType;
+
   public ws: WebSocket;
 
   public promise = new Deferred<void>();
@@ -31,12 +34,13 @@ class Connection {
     });
   }
 
-  public addPeer (ws: WebSocket) {
+  public addPeer (type: PeerType, ws: WebSocket) {
     const emptyPeer = this.peers.find((peer) => !peer.ws);
     if (!emptyPeer) {
       return false;
     }
     emptyPeer.ws = ws;
+    emptyPeer.type = type;
     emptyPeer.promise.resolve();
     return true;
   }
@@ -48,11 +52,12 @@ wss.on("connection", (ws, request) => {
   const {socket} = request;
   const searchParams = new URLSearchParams(request.url.slice(1));
   const id = searchParams.get("id");
+  const type = searchParams.get("type") as PeerType;
   const close = (reason: string) => {
     console.log(`Closed ${socket.remoteAddress}:${socket.remotePort} '${id}' [${client}]: ${reason}`);
     ws.close(1000, reason);
   };
-  if (!id) {
+  if (!id || !type) {
     close("Both id and type are required");
     return;
   }
