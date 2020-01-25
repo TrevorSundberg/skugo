@@ -4,9 +4,10 @@
   "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
   "main": ".eslintrc.js",
   "scripts": {
-    "start": "cd client && node --max_old_space_size=8192 ../node_modules/.bin/webpack-dev-server --mode development --open --hot",
+    "start-client": "cd client && node --max_old_space_size=8192 ../node_modules/.bin/webpack-dev-server --mode development --open --hot",
     "build-client": "cd client && npm install --no-progress && eslint src/* && rm -rf ./bin && webpack --mode production",
     "build-host": "cd host && npm install --no-progress && eslint src/* && tsc",
+    "start-host": "node ./host/bin/index.js",
     "build-relay": "cd relay && npm install --no-progress && eslint src/* && tsc",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy",
     "build-all": "npm run build-client && npm run build-host && npm run build-relay"

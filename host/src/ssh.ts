@@ -36,44 +36,46 @@ const key =
 "yyX4kRnyk1yG3pWIheObkWHqS/q6VSgjh++REQrLrTybqNC7ukaeKQ==\n" +
 "-----END RSA PRIVATE KEY-----\n";
 
-const server = new ssh2.Server({
-  hostKeys: [{key, passphrase: "test"}]
-});
+export class SshServer {
+  public server: ssh2.Server;
 
-server.on("connection", (client) => {
-  client.on("authentication", (ctx) => {
-    ctx.accept();
-  });
+  public constructor () {
+    this.server = new ssh2.Server({
+      hostKeys: [{key, passphrase: "test"}]
+    });
 
-  client.on("session", (accept) => {
-    const session = accept();
-    session.on("pty", (acceptPty, reject, info) => {
-      acceptPty();
-
-      const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
-
-      const ptyProcess = pty.spawn(shell, [], {
-        cols: info.cols,
-        cwd: process.cwd(),
-        env: process.env,
-        name: "xterm-color",
-        rows: info.rows
+    this.server.on("connection", (client) => {
+      client.on("authentication", (ctx) => {
+        ctx.accept();
       });
 
-      session.on("shell", (acceptShell) => {
-        const stream = acceptShell();
-        stream.on("data", (data) => {
-          ptyProcess.write(data);
-        });
-        ptyProcess.on("data", (data) => {
-          process.stdout.write(data);
-          stream.write(data);
+      client.on("session", (accept) => {
+        const session = accept();
+        session.on("pty", (acceptPty, reject, info) => {
+          acceptPty();
+
+          const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
+
+          const ptyProcess = pty.spawn(shell, [], {
+            cols: info.cols,
+            cwd: process.cwd(),
+            env: process.env,
+            name: "xterm-color",
+            rows: info.rows
+          });
+
+          session.on("shell", (acceptShell) => {
+            const stream = acceptShell();
+            stream.on("data", (data) => {
+              ptyProcess.write(data);
+            });
+            ptyProcess.on("data", (data) => {
+              process.stdout.write(data);
+              stream.write(data);
+            });
+          });
         });
       });
     });
-  });
-});
-
-server.listen(0, "127.0.0.1", () => {
-  console.log(`Listening on port ${server.address().port}`);
-});
+  }
+}
