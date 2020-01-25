@@ -1,10 +1,48 @@
+import {Deferred, sequence} from "../../shared/utility";
 import WebSocket from "ws";
 
 const wss = new WebSocket.Server({
   port: 80
-});
+}, () => console.log("Relay server started"));
 
-const pairs: Record<string, WebSocket[]> = {};
+class Peer {
+  public ws: WebSocket;
+
+  public promise = new Deferred<void>();
+}
+
+class Connection {
+  private peers: [Peer, Peer] = [
+    new Peer(),
+    new Peer()
+  ]
+
+  public readonly sendToOther: (wsFrom: WebSocket, data: WebSocket.Data) => void;
+
+  public constructor () {
+    this.sendToOther = sequence(async (wsFrom: WebSocket, data: WebSocket.Data) => {
+      console.log("Received data", data);
+      const otherPeer = this.peers[0].ws === wsFrom ? this.peers[1] : this.peers[0];
+      await otherPeer.promise;
+      if (otherPeer.ws.readyState === WebSocket.OPEN) {
+        otherPeer.ws.send(data);
+        console.log("Forwarded data", data);
+      }
+    });
+  }
+
+  public addPeer (ws: WebSocket) {
+    const emptyPeer = this.peers.find((peer) => !peer.ws);
+    if (!emptyPeer) {
+      return false;
+    }
+    emptyPeer.ws = ws;
+    emptyPeer.promise.resolve();
+    return true;
+  }
+}
+
+const pairs: Record<string, Connection> = {};
 
 wss.on("connection", (ws, request) => {
   const {socket} = request;
@@ -16,33 +54,22 @@ wss.on("connection", (ws, request) => {
     return;
   }
   console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
-  const sockets = pairs[id] || [];
-  sockets.push(ws);
-  pairs[id] = sockets;
+  const connection = pairs[id] || new Connection();
+  if (!connection.addPeer(ws)) {
+    console.log(`Rejected ${socket.remoteAddress}:${socket.remotePort} (two already connected)`);
+    ws.close(1000, "Two peers already connected");
+    return;
+  }
+  pairs[id] = connection;
 
   ws.on("message", (data) => {
-    for (const otherSocket of sockets) {
-      if (otherSocket !== ws) {
-        if (otherSocket.readyState === WebSocket.OPEN) {
-          otherSocket.send(data);
-          console.log(data);
-        }
-      }
-    }
+    connection.sendToOther(ws, data);
   });
 
   const onClose = () => {
     console.log(`Disconnected ${socket.remoteAddress}:${socket.remotePort} with id ${id}`);
     ws.close();
-    const index = sockets.indexOf(ws);
-    if (index !== -1) {
-      sockets.splice(index, 1);
-    }
-
-    if (sockets.length === 0) {
-      delete pairs[id];
-      console.log(`All connections for ${id} closed`);
-    }
+    delete pairs[id];
   };
 
   ws.on("close", onClose);
