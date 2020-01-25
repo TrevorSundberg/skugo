@@ -1,13 +1,16 @@
 import {Deferred, sequence} from "./utility";
+import {getPageUrl, getWebSocketUrl} from "../../shared";
 import {SshServer} from "./ssh";
 import WebSocket from "ws";
 import net from "net";
 import {uuid} from "uuidv4";
 
-const url = `wss://skugo.openode.io/${uuid()}`;
-console.log(url);
+const id = uuid();
+const wsUrl = `${getWebSocketUrl()}?id=${id}`;
+const pageUrl = `${getPageUrl()}?id=${id}`;
+console.log(pageUrl);
 const wsDefer = new Deferred<void>();
-const ws = new WebSocket(url);
+const ws = new WebSocket(wsUrl);
 const ssh = new SshServer();
 
 const proxyDefer = new Deferred<void>();
