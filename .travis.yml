@@ -7,21 +7,22 @@ script:
 - npm run build-all
 deploy:
   provider: pages
+  skip_cleanup: true
   local_dir: ./client/bin
   github_token: $GITHUB_TOKEN
-  skip_cleanup: true
   keep_history: false
   on:
   provider: script
+  skip_cleanup: true
   script:
   - npm run release-linux-x64
   on:
     branch: master
     condition: $TRAVIS_OS_NAME = linux
   provider: releases
+  skip_cleanup: true
   api_key: $GITHUB_TOKEN
   file_glob: true
   file: bin/*.{zip,tar.xz}
-  skip_cleanup: true
   on:
     branch: master
