@@ -7,7 +7,7 @@ script:
 - npm run build-all
 - npm run release-linux-x64
 deploy:
-  provider: pages
+- provider: pages
   skip_cleanup: true
   local_dir: ./client/bin
   github_token: $GITHUB_TOKEN
@@ -15,7 +15,7 @@ deploy:
   on:
     branch: master
     tags: true
-  provider: releases
+- provider: releases
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
   file_glob: true
