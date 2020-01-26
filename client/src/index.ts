@@ -12,7 +12,8 @@ const party = searchParams.get("party");
 if (!party) {
   throw new Error("No party provided");
 }
-const rs = new RelaySocket(getWebSocketUrl(), party, "client");
+const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "client");
+const rs = new RelaySocket(new WebSocket(wsUrl));
 rs.onPeerAdded = (addedMsg, peer) => {
   if (addedMsg.state === "host") {
     const terminal = new Terminal();

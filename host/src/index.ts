@@ -11,7 +11,8 @@ const party = uuid();
 const pageUrl = `${getPageUrl()}?party=${party}`;
 console.log(pageUrl);
 
-const rs = new RelaySocket(getWebSocketUrl(), party, "host");
+const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "host");
+const rs = new RelaySocket(new WebSocket(wsUrl));
 
 rs.onPeerAdded = (_, peer) => {
   const ptyProcess = pty.spawn(shell, [], {

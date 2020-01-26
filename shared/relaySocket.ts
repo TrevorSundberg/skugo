@@ -45,13 +45,15 @@ export class RelaySocket {
 
   public readonly peers: Record<number, RelayPeer> = {};
 
-  public constructor (hostUrl: string, party: string, state: any) {
+  public static getWebSocketUrl (hostUrl: string, party: string, state: any) {
     const url = new URL(hostUrl);
     url.searchParams.set("party", party);
     url.searchParams.set("state", JSON.stringify(state));
+    return url.href;
+  }
 
-    const WebSocketImport = typeof WebSocket === "undefined" ? require("ws".toLowerCase()) : WebSocket;
-    this.ws = new WebSocketImport(url.href);
+  public constructor (ws: WebSocket) {
+    this.ws = ws;
 
     this.ws.addEventListener("message", async (event) => {
       const message = JSON.parse(event.data as string) as RelayMessage;
