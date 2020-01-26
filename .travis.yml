@@ -5,6 +5,7 @@ install:
 - npm install
 script:
 - npm run build-all
+- npm run release-linux-x64
 deploy:
   provider: pages
   skip_cleanup: true
@@ -12,13 +13,7 @@ deploy:
   github_token: $GITHUB_TOKEN
   keep_history: false
   on:
-  provider: script
-  skip_cleanup: true
-  script:
-  - npm run release-linux-x64
-  on:
     branch: master
-    condition: $TRAVIS_OS_NAME = linux
   provider: releases
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
