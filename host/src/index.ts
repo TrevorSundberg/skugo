@@ -1,26 +1,19 @@
 import {Message, MessageResize, MessageStream, MessageType} from "../../shared/message";
 import {getPageUrl, getWebSocketUrl} from "../../shared/urls";
-import WebSocket from "ws";
+import {RelaySocket} from "../../shared/relaySocket";
 import os from "os";
 import {uuid} from "uuidv4";
+import pty = require("node-pty");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pty: typeof import("node-pty") = require("node-pty");
+const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
-const id = uuid();
-const wsUrl = getWebSocketUrl(id, "host");
-const pageUrl = `${getPageUrl()}?id=${id}`;
+const party = uuid();
+const pageUrl = `${getPageUrl()}?party=${party}`;
 console.log(pageUrl);
-const ws = new WebSocket(wsUrl);
 
-ws.on("open", () => {
-  console.log("WebSocket connected");
+const rs = new RelaySocket(getWebSocketUrl(), party, "host");
 
-  const send = <T extends Message>(msg: T) => {
-    ws.send(JSON.stringify(msg));
-  };
-
-  const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
+rs.onPeerAdded = (_, peer) => {
   const ptyProcess = pty.spawn(shell, [], {
     cols: 80,
     cwd: process.cwd(),
@@ -29,8 +22,19 @@ ws.on("open", () => {
     rows: 24
   });
 
-  ws.on("message", async (data) => {
-    const message = JSON.parse(data as string) as Message;
+  peer.onRemoved = () => {
+    ptyProcess.kill();
+  };
+
+  ptyProcess.on("data", (data) => {
+    peer.send<MessageStream>({
+      data,
+      type: MessageType.Stream
+    });
+  });
+
+  peer.onTunnelMessage = (tunnelMsg) => {
+    const message = tunnelMsg.data as Message;
     switch (message.type) {
       case MessageType.Resize: {
         const msg = message as MessageResize;
@@ -44,12 +48,5 @@ ws.on("open", () => {
         break;
       }
     }
-  });
-
-  ptyProcess.on("data", (data) => {
-    send<MessageStream>({
-      data,
-      type: MessageType.Stream
-    });
-  });
-});
+  };
+};
