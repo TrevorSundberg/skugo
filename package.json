@@ -12,7 +12,7 @@
     "build-relay": "cd relay && npm install --no-progress && eslint src/* && rm -rf ./bin && tsc",
     "start-relay": "npm run build-relay && cd relay && docker build -t relay . && docker run --rm -p 80:80 relay",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy",
-    "build-all": "npm run build-client && npm run build-host && npm run && npm run build-relay"
+    "build-all": "npm run build-client && npm run build-host && npm run package-host && npm run build-relay"
   },
   "repository": {
     "type": "git",
