@@ -13,7 +13,7 @@
     "start-relay": "npm run build-relay && cd relay && docker build -t relay . && docker run --rm -p 80:80 relay",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy",
     "build-all": "npm run build-client && npm run build-host && npm run package-host && npm run build-relay",
-    "release-linux-x64": "cd bin && tar -cJf linux-x64.tar.xz skugo pty.node"
+    "release-linux-x64": "cd bin && tar -cJf skugo-linux-x64.tar.xz skugo pty.node"
   },
   "repository": {
     "type": "git",
