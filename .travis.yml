@@ -12,10 +12,16 @@ deploy:
   skip_cleanup: true
   keep_history: false
   on:
+  provider: script
+  script:
+  - npm run release-linux-x64
+  on:
     branch: master
+    condition: $TRAVIS_OS_NAME = linux
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: bin/release.zip
+  file_glob: true
+  file: bin/*.{zip,tar.xz}
   skip_cleanup: true
   on:
     branch: master
