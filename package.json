@@ -8,10 +8,11 @@
     "start-client": "cd client && node --max_old_space_size=8192 ../node_modules/.bin/webpack-dev-server --mode development --open --hot",
     "build-host": "cd host && npm install --no-progress && eslint src/* && rm -rf ./bin && tsc",
     "start-host": "npm run build-host && NODE_ENV=dev node ./host/bin/host/src/index.js",
+    "package-host": "npm run build-host && nexe --output bin ./host/bin/host/src/index.js && cp host/node_modules/node-pty/build/Release/pty.node bin && zip -r release.zip bin",
     "build-relay": "cd relay && npm install --no-progress && eslint src/* && rm -rf ./bin && tsc",
     "start-relay": "npm run build-relay && cd relay && docker build -t relay . && docker run --rm -p 80:80 relay",
     "deploy-relay": "npm run build-relay && cd relay && openode deploy",
-    "build-all": "npm run build-client && npm run build-host && npm run build-relay"
+    "build-all": "npm run build-client && npm run build-host && npm run && npm run build-relay"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
     "favicons-webpack-plugin": "^1.0.2",
     "file-loader": "^5.0.2",
     "html-webpack-plugin": "^3.2.0",
+    "nexe": "^3.3.2",
     "openode": "^2.0.14",
     "raw-loader": "^4.0.0",
     "style-loader": "^1.1.3",

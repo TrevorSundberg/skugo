@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '11'
+- '10'
 install:
 - npm install
 script:
@@ -11,5 +11,11 @@ deploy:
   github_token: $GITHUB_TOKEN
   skip_cleanup: true
   keep_history: false
+  on:
+    branch: master
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: release.zip
+  skip_cleanup: true
   on:
     branch: master
