@@ -1,6 +1,7 @@
 import {Message, MessageResize, MessageStream, MessageType} from "../../shared/message";
 import {getPageUrl, getWebSocketUrl} from "../../shared/urls";
 import {RelaySocket} from "../../shared/relaySocket";
+import WebSocket from "ws";
 import os from "os";
 import {uuid} from "uuidv4";
 import pty = require("node-pty");
@@ -12,7 +13,7 @@ const pageUrl = `${getPageUrl()}?party=${party}`;
 console.log(pageUrl);
 
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "host");
-const rs = new RelaySocket(new WebSocket(wsUrl));
+const rs = new RelaySocket(new WebSocket(wsUrl) as any);
 
 rs.onPeerAdded = (_, peer) => {
   const ptyProcess = pty.spawn(shell, [], {
