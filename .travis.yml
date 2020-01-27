@@ -9,6 +9,7 @@ script:
 deploy:
 - provider: pages
   skip_cleanup: true
+  fqdn: skugo.dev
   local_dir: ./client/bin
   github_token: $GITHUB_TOKEN
   keep_history: false
