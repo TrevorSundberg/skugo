@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
   "main": ".eslintrc.js",
+  "bin": "host/bin/host/src/index.js",
   "scripts": {
     "build-client": "cd client && npm install --no-progress && eslint src/* && rm -rf ./bin && webpack --mode production",
     "start-client": "cd client && node --max_old_space_size=8192 ../node_modules/.bin/webpack-dev-server --mode development --open --hot",
