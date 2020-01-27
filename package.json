@@ -1,6 +1,6 @@
 {
   "name": "skugo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
   "main": ".eslintrc.js",
   "bin": "node host/bin/host/src/index.js",
