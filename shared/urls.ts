@@ -6,4 +6,4 @@ if (isDev) {
 
 export const getWebSocketUrl = () => isDev ? "ws://localhost:80/" : "wss://skugo.openode.io/";
 
-export const getPageUrl = () => isDev ? "http://localhost:8080/" : "https://trevorsundberg.github.io/skugo/";
+export const getPageUrl = () => isDev ? "http://localhost:8080/" : "https://skugo.dev/";
