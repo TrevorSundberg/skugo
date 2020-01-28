@@ -1,2 +1,3 @@
 *
-!host/**
+!bin/skugo
+!bin/pty.node
