@@ -7,10 +7,10 @@
   "author": "Trevor Sundberg",
   "license": "MIT",
   "dependencies": {
-    "@types/uuidv4": "^5.0.0",
+    "@types/uniqid": "^4.1.3",
     "@types/ws": "^7.2.0",
     "node-pty": "^0.9.0",
-    "uuidv4": "^6.0.2",
+    "uniqid": "^5.2.0",
     "ws": "^7.2.1"
   }
 }

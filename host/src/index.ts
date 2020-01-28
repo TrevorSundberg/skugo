@@ -3,12 +3,12 @@ import {getPageUrl, getWebSocketUrl} from "../../shared/urls";
 import {RelaySocket} from "../../shared/relaySocket";
 import WebSocket from "ws";
 import os from "os";
-import {uuid} from "uuidv4";
+import uniqid from "uniqid";
 import pty = require("node-pty");
 
 const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
-const party = uuid();
+const party = uniqid();
 const pageUrl = `${getPageUrl()}?party=${party}`;
 console.log(pageUrl);
 
