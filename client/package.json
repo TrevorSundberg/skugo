@@ -7,6 +7,12 @@
   "author": "Trevor Sundberg",
   "license": "MIT",
   "dependencies": {
+    "@types/bootstrap": "^4.3.1",
+    "@types/jquery": "^3.3.31",
+    "@types/popper.js": "^1.11.0",
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.1",
     "xterm": "^4.3.0",
     "xterm-addon-fit": "^0.3.0",
     "xterm-addon-search": "^0.4.0",

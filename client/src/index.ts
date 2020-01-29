@@ -1,6 +1,10 @@
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "xterm/css/xterm.css";
 import {Message, MessageResize, MessageStream, MessageType} from "../../shared/message";
+import $ from "jquery";
 import {FitAddon} from "xterm-addon-fit";
+import {Modal} from "./modal";
 import {RelaySocket} from "../../shared/relaySocket";
 import {SearchAddon} from "xterm-addon-search";
 import {Terminal} from "xterm";
@@ -10,15 +14,29 @@ import {getWebSocketUrl} from "../../shared/urls";
 const searchParams = new URLSearchParams(location.search);
 const party = searchParams.get("party");
 if (!party) {
-  throw new Error("No party provided");
+  Modal.messageBox("Error", "No party provided in the link", false);
+  throw new Error("No party provided in the link");
 }
 const secret = location.hash.substr(1);
 if (!secret) {
-  throw new Error("No secret provided");
+  Modal.messageBox("Error", "No secret provided in the link", false);
+  throw new Error("No secret provided in the link");
 }
 
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "client");
-const rs = new RelaySocket(new WebSocket(wsUrl), secret);
+const ws = new WebSocket(wsUrl);
+const onDisconnect = () => {
+  Modal.messageBox(
+    "Disconnected",
+    $("<p>You have been disconnected from the server. " +
+      "Click <a href='javascript:location.reload(true)'>here</a> to retry.</p>"),
+    false
+  );
+};
+ws.addEventListener("close", onDisconnect);
+ws.addEventListener("error", onDisconnect);
+
+const rs = new RelaySocket(ws, secret);
 rs.onPeerAdded = (addedMsg, peer) => {
   if (addedMsg.state === "host") {
     const terminal = new Terminal();
