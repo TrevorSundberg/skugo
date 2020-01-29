@@ -63,6 +63,7 @@ module.exports = {
     "require-atomic-updates": "off",
     "no-bitwise": "off",
     "no-mixed-operators": "off",
-    "id-length": "off"
+    "id-length": "off",
+    "no-process-exit": "off"
   },
 };
