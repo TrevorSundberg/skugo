@@ -39,7 +39,7 @@ The pass-phrase is generated using crypto random bytes and is included as a base
 
 *https<nolink>://skugo.dev/?party=4bxj44owok5yu0vsi#**gCBKgCgbcFZPnHw1Eb3Kcw==***
 
-By using the hash, it ensures that only the client sees it as hashes are never sent to the server by the browser.
+By using the hash, it ensures that only the client sees it; hashes are never sent to the server by the browser.
 From there CryptoJS internally uses a key derivation function to derive a 256bit key.
 This end to end encryption has two advantages:
 - Even though the relay receives your data and forwards it, it cannot decrypt it; privacy!
