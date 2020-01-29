@@ -15,7 +15,11 @@ const pageUrl = `${getPageUrl()}?party=${party}#${secret}`;
 console.log(pageUrl);
 
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "host");
-const rs = new RelaySocket(new WebSocket(wsUrl) as any, secret);
+const ws = new WebSocket(wsUrl);
+const rs = new RelaySocket(ws as any, secret);
+
+ws.on("error", () => process.exit());
+ws.on("close", () => process.exit());
 
 rs.onPeerAdded = (_, peer) => {
   const ptyProcess = pty.spawn(shell, [], {
