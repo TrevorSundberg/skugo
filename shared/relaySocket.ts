@@ -5,6 +5,7 @@ import {
   RelayTunnelFailed,
   RelayTunnelMessage
 } from "./relayMessage";
+import CryptoJS from "crypto-js";
 
 export class RelayPeer {
   public readonly socket: RelaySocket;
@@ -13,13 +14,14 @@ export class RelayPeer {
 
   public onRemoved: (msg: RelayPeerMessage) => void;
 
-  public onTunnelMessage: (msg: RelayTunnelMessage) => void;
+  public onTunnelMessage: (msg: RelayTunnelMessage, data: any) => void;
 
   public onTunnelFailed: (msg: RelayTunnelFailed) => void;
 
   public send<T extends any> (data: T) {
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), this.socket.secret).toString();
     const msg: RelayTunnelMessage = {
-      data,
+      encrypted,
       to: this.msg.id,
       type: RelayMessageType.TunnelMessage
     };
@@ -35,11 +37,13 @@ export class RelayPeer {
 export class RelaySocket {
   public readonly ws: WebSocket;
 
+  public readonly secret: string;
+
   public onPeerAdded: (msg: RelayPeerMessage, peer: RelayPeer) => void;
 
   public onPeerRemoved: (msg: RelayPeerMessage, peer: RelayPeer) => void;
 
-  public onTunnelMessage: (msg: RelayTunnelMessage, peer: RelayPeer) => void;
+  public onTunnelMessage: (msg: RelayTunnelMessage, peer: RelayPeer, data: any) => void;
 
   public onTunnelFailed: (msg: RelayTunnelFailed, peer: RelayPeer) => void;
 
@@ -52,10 +56,11 @@ export class RelaySocket {
     return url.href;
   }
 
-  public constructor (ws: WebSocket) {
+  public constructor (ws: WebSocket, secret: string) {
     this.ws = ws;
+    this.secret = secret;
 
-    this.ws.addEventListener("message", async (event) => {
+    this.ws.addEventListener("message", (event) => {
       const message = JSON.parse(event.data as string) as RelayMessage;
       switch (message.type) {
         case RelayMessageType.PeerAdded: {
@@ -82,11 +87,12 @@ export class RelaySocket {
         case RelayMessageType.TunnelMessage: {
           const msg = message as RelayTunnelMessage;
           const peer = this.peers[msg.from];
+          const data = JSON.parse(CryptoJS.AES.decrypt(msg.encrypted, this.secret).toString(CryptoJS.enc.Utf8));
           if (peer.onTunnelMessage) {
-            peer.onTunnelMessage(msg);
+            peer.onTunnelMessage(msg, data);
           }
           if (this.onTunnelMessage) {
-            this.onTunnelMessage(msg, peer);
+            this.onTunnelMessage(msg, peer, data);
           }
           break;
         }

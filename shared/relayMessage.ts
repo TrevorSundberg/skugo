@@ -27,7 +27,7 @@ export interface RelayTunnelMessage extends RelayMessage {
 
   to: number;
 
-  data: any;
+  encrypted: string;
 }
 
 export interface RelayTunnelFailed extends RelayMessage {

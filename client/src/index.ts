@@ -12,8 +12,13 @@ const party = searchParams.get("party");
 if (!party) {
   throw new Error("No party provided");
 }
+const secret = location.hash.substr(1);
+if (!secret) {
+  throw new Error("No secret provided");
+}
+
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "client");
-const rs = new RelaySocket(new WebSocket(wsUrl));
+const rs = new RelaySocket(new WebSocket(wsUrl), secret);
 rs.onPeerAdded = (addedMsg, peer) => {
   if (addedMsg.state === "host") {
     const terminal = new Terminal();
@@ -25,8 +30,7 @@ rs.onPeerAdded = (addedMsg, peer) => {
     terminal.resize(80, 24);
     terminal.open(document.getElementById("terminal"));
 
-    peer.onTunnelMessage = (tunnelMsg) => {
-      const message = tunnelMsg.data as Message;
+    peer.onTunnelMessage = (tunnelMsg, message: Message) => {
       switch (message.type) {
         case MessageType.Stream: {
           const msg = message as MessageStream;

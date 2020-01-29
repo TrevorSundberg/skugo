@@ -2,6 +2,7 @@ import {Message, MessageResize, MessageStream, MessageType} from "../../shared/m
 import {getPageUrl, getWebSocketUrl} from "../../shared/urls";
 import {RelaySocket} from "../../shared/relaySocket";
 import WebSocket from "ws";
+import crypto from "crypto";
 import os from "os";
 import uniqid from "uniqid";
 import pty = require("node-pty");
@@ -9,11 +10,12 @@ import pty = require("node-pty");
 const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
 const party = uniqid();
-const pageUrl = `${getPageUrl()}?party=${party}`;
+const secret = crypto.randomBytes(16).toString("base64");
+const pageUrl = `${getPageUrl()}?party=${party}#${secret}`;
 console.log(pageUrl);
 
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "host");
-const rs = new RelaySocket(new WebSocket(wsUrl) as any);
+const rs = new RelaySocket(new WebSocket(wsUrl) as any, secret);
 
 rs.onPeerAdded = (_, peer) => {
   const ptyProcess = pty.spawn(shell, [], {
@@ -35,8 +37,7 @@ rs.onPeerAdded = (_, peer) => {
     });
   });
 
-  peer.onTunnelMessage = (tunnelMsg) => {
-    const message = tunnelMsg.data as Message;
+  peer.onTunnelMessage = (tunnelMsg, message: Message) => {
     switch (message.type) {
       case MessageType.Resize: {
         const msg = message as MessageResize;
