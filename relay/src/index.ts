@@ -44,7 +44,7 @@ class Peer {
 }
 
 class Connection {
-  private peers: Peer[] = [];
+  public peers: Peer[] = [];
 
   private idCounter = 0;
 
@@ -86,7 +86,7 @@ class Connection {
   }
 }
 
-const pairs: Record<string, Connection> = {};
+const parties: Record<string, Connection> = {};
 
 wss.on("connection", (ws, request) => {
   const {socket} = request;
@@ -94,18 +94,26 @@ wss.on("connection", (ws, request) => {
   const party = searchParams.get("party");
   const stateStr = searchParams.get("state");
   const state = JSON.parse(stateStr);
+  let cleanup = () => null;
   const close = (reason: string) => {
     console.log(`Closed ${socket.remoteAddress}:${socket.remotePort} ${party} ${stateStr}: ${reason}`);
     ws.close(1000, reason);
+    cleanup();
   };
   if (!party) {
     close("Both party and state are required");
     return;
   }
   console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} ${party} ${stateStr}`);
-  const connection = pairs[party] || new Connection();
+  const connection = parties[party] || new Connection();
   const peer = connection.addPeer(state, ws);
-  pairs[party] = connection;
+  parties[party] = connection;
+  cleanup = () => {
+    connection.removePeer(peer);
+    if (connection.peers.length === 0) {
+      delete parties[party];
+    }
+  };
 
   ws.on("message", (data) => {
     if (typeof data !== "string") {
@@ -134,11 +142,6 @@ wss.on("connection", (ws, request) => {
     }
   });
 
-  const onClose = () => {
-    close("Disconnected");
-    delete pairs[party];
-  };
-
-  ws.on("close", onClose);
-  ws.on("error", onClose);
+  ws.on("close", () => close("Disconnected"));
+  ws.on("error", () => close("Error"));
 });
