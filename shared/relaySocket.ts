@@ -60,7 +60,10 @@ export class RelaySocket {
     this.ws = ws;
     this.secret = secret;
 
-    this.ws.addEventListener("message", (event) => {
+    ws.addEventListener("close", (event) => console.log(`WebSocket closed: [${event.code}] ${event.reason}`));
+    ws.addEventListener("error", (event) => console.log(`WebSocket error: ${(event as any).message || "Closed"}`));
+
+    ws.addEventListener("message", (event) => {
       const message = JSON.parse(event.data as string) as RelayMessage;
       switch (message.type) {
         case RelayMessageType.PeerAdded: {

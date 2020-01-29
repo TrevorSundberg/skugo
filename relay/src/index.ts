@@ -95,14 +95,14 @@ wss.on("connection", (ws, request) => {
   const stateStr = searchParams.get("state");
   const state = JSON.parse(stateStr);
   const close = (reason: string) => {
-    console.log(`Closed ${socket.remoteAddress}:${socket.remotePort} ${party} "${stateStr}": ${reason}`);
+    console.log(`Closed ${socket.remoteAddress}:${socket.remotePort} ${party} ${stateStr}: ${reason}`);
     ws.close(1000, reason);
   };
   if (!party) {
     close("Both party and state are required");
     return;
   }
-  console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} ${party} "${stateStr}"`);
+  console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} ${party} ${stateStr}`);
   const connection = pairs[party] || new Connection();
   const peer = connection.addPeer(state, ws);
   pairs[party] = connection;
