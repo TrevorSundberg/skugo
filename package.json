@@ -2,7 +2,6 @@
   "name": "skugo",
   "version": "1.0.11",
   "description": "Generate a unique shareable link and remote into a machine via web interface (SSH)",
-  "main": ".eslintrc.js",
   "bin": "./bin/skugo",
   "scripts": {
     "build-client": "cd client && npm install --no-progress && eslint src/* && rm -rf ./bin && webpack --mode production",
