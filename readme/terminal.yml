@@ -50,7 +50,7 @@ config:
   # Don't forget to add a backgroundColor style with a null as type
   frameBox:
     type: floating
-    title: Terminalizer
+    title: Terminal
     style:
       border: 0px black solid
       # boxShadow: none
@@ -112,7 +112,7 @@ config:
 # Records, feel free to edit them
 records:
   - delay: 408
-    content: "\e]0;trevor@trevor:~\a\e]7;file://trevor/home/trevor\a\e]0;trevor@trevor: ~\a\e[01;32mtrevor@trevor\e[00m:\e[01;34m~\e[00m$ "
+    content: "\e]0;trevor@trevor:~/skugotest\a\e]7;file://trevor/home/trevor\a\e]0;trevor@trevor: ~/skugotest\a\e[01;32mtrevor@trevor\e[00m:\e[01;34m~/skugotest\e[00m$ "
   - delay: 394
     content: s
   - delay: 90
@@ -126,6 +126,6 @@ records:
   - delay: 837
     content: "\r\n"
   - delay: 91
-    content: "https://skugo.dev/?party=4bxj44jb8k5yu0vsi#gCBKgCgbcFZPnHw1Eb3Kcw==\r\n"
+    content: "https://skugo.dev/?party=4bxj44owok5yu0vsi#gCBKgCgbcFZPnHw1Eb3Kcw==\r\n"
   - delay: 1333
     content: "\r\n"
