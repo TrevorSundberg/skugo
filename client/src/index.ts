@@ -7,6 +7,7 @@ import {FitAddon} from "xterm-addon-fit";
 import {Modal} from "./modal";
 import {RelaySocket} from "../../shared/relaySocket";
 import {SearchAddon} from "xterm-addon-search";
+import {Spinner} from "./spinner";
 import {Terminal} from "xterm";
 import {WebLinksAddon} from "xterm-addon-web-links";
 import {getWebSocketUrl} from "../../shared/urls";
@@ -23,9 +24,12 @@ if (!secret) {
   throw new Error("No secret provided in the link");
 }
 
+const spinner = new Spinner();
+
 const wsUrl = RelaySocket.getWebSocketUrl(getWebSocketUrl(), party, "client");
 const ws = new WebSocket(wsUrl);
 const onDisconnect = () => {
+  spinner.hide();
   Modal.messageBox(
     "Disconnected",
     $("<p>You have been disconnected from the server. " +
@@ -73,5 +77,6 @@ rs.onPeerAdded = (addedMsg, peer) => {
       });
     });
     fitAddon.fit();
+    spinner.hide();
   }
 };
