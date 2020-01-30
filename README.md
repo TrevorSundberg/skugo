@@ -40,8 +40,7 @@ Running skugo generates a party id using [uniqid](https://www.npmjs.com/package/
 
 - *https<nolink>://skugo.dev/?party=**4bxj44owok5yu0vsi**#gCBKgCgbcFZPnHw1Eb3Kcw==*
 
-To further enhance security, the underlying protocol is encrypted with CryptoJS's AES-256.
-Aside from the unique session id, skugo also generates a cryptographic random 128bit pass-phrase and is included as a base64 hash in the url:
+The underlying protocol is encrypted with CryptoJS's AES-256. A cryptographic random 128bit pass-phrase is generated and is included as a base64 hash in the url:
 
 - *https<nolink>://skugo.dev/?party=4bxj44owok5yu0vsi#**gCBKgCgbcFZPnHw1Eb3Kcw==***
 
@@ -49,7 +48,7 @@ By using the the url hash `#`, it ensures that only the client and the machine r
 Hashes are never sent to the relay / web server by the browser.
 From there CryptoJS internally uses a key derivation function to derive a 256bit key.
 This end to end encryption has two advantages:
-- Even though the relay receives your data and forwards it, it cannot decrypt it; privacy!
+- Even though the relay receives your data and forwards it, it cannot decrypt it (privacy)
 - Assuming the relay server is compromised, the attacker cannot control your machine without breaking the encryption.
 
 It may be obvious but needs to be said, **do not share the link with anyone you don't trust**.
