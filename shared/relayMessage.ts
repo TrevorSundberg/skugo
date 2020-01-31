@@ -8,6 +8,8 @@ export enum RelayMessageType {
   TunnelMessage,
 }
 
+export type RelayAuthProvider = "google";
+
 export interface RelayMessage {
   type: RelayMessageType;
 }
@@ -18,6 +20,8 @@ export interface RelayPeerMessage extends RelayMessage {
   id: number;
 
   state: any;
+
+  verifiedEmail: string;
 }
 
 export interface RelayTunnelMessage extends RelayMessage {

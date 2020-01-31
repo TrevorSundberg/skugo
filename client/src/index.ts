@@ -11,9 +11,22 @@ import {Spinner} from "./spinner";
 import {Terminal} from "xterm";
 import {WebLinksAddon} from "xterm-addon-web-links";
 import {getWebSocketUrl} from "../../shared/urls";
+import googleClientId from "../../shared/googleClientId.json";
+// eslint-disable-next-line init-declarations
+declare const gapi: any;
 
 (() => {
   const searchParams = new URLSearchParams(location.search);
+  if (searchParams.get("auth")) {
+    const auth2 = (window as any).gapi.auth2.init({
+      client_id: googleClientId
+    });
+
+    if (!auth2.isSignedIn.get()) {
+      $(document.body).append($("<div class='g-signin2' data-onsuccess='onSignIn'></div>"));
+      return;
+    }
+  }
 
   const party = searchParams.get("party");
   if (!party) {

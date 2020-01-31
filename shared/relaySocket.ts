@@ -1,4 +1,5 @@
 import {
+  RelayAuthProvider,
   RelayMessage,
   RelayMessageType,
   RelayPeerMessage,
@@ -49,10 +50,18 @@ export class RelaySocket {
 
   public readonly peers: Record<number, RelayPeer> = {};
 
-  public static getWebSocketUrl (hostUrl: string, party: string, state: any) {
+  public static getWebSocketUrl (
+    hostUrl: string,
+    party: string,
+    state: any,
+    authToken?: string,
+    authProvider?: RelayAuthProvider
+  ) {
     const url = new URL(hostUrl);
     url.searchParams.set("party", party);
     url.searchParams.set("state", JSON.stringify(state));
+    url.searchParams.set("authToken", authToken);
+    url.searchParams.set("authProvider", authProvider);
     return url.href;
   }
 

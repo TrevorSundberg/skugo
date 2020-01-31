@@ -1,4 +1,5 @@
 import {
+  RelayAuthProvider,
   RelayMessage,
   RelayMessageType,
   RelayPeerMessage,
@@ -6,6 +7,7 @@ import {
   RelayTunnelMessage
 } from "../../shared/relayMessage";
 import WebSocket from "ws";
+import googleClientId from "../../shared/googleClientId.json";
 
 const wss = new WebSocket.Server({
   port: 80
@@ -17,6 +19,8 @@ class Peer {
   public state: any;
 
   public ws: WebSocket;
+
+  public verifiedEmail: string;
 
   public send<T extends RelayMessage> (message: T): boolean {
     if (this.ws.readyState === WebSocket.OPEN) {
@@ -30,7 +34,8 @@ class Peer {
     this.send<RelayPeerMessage>({
       id: peer.id,
       state: peer.state,
-      type: RelayMessageType.PeerAdded
+      type: RelayMessageType.PeerAdded,
+      verifiedEmail: peer.verifiedEmail
     });
   }
 
@@ -38,7 +43,8 @@ class Peer {
     this.send<RelayPeerMessage>({
       id: peer.id,
       state: peer.state,
-      type: RelayMessageType.PeerRemoved
+      type: RelayMessageType.PeerRemoved,
+      verifiedEmail: peer.verifiedEmail
     });
   }
 }
@@ -48,11 +54,12 @@ class Connection {
 
   private idCounter = 0;
 
-  public addPeer (state: any, ws: WebSocket): Peer {
+  public addPeer (state: any, ws: WebSocket, verifiedEmail: string): Peer {
     const peer = new Peer();
     peer.id = this.idCounter++;
     peer.state = state;
     peer.ws = ws;
+    peer.verifiedEmail = verifiedEmail;
     for (const otherPeer of this.peers) {
       otherPeer.sendPeerAdded(peer);
       peer.sendPeerAdded(otherPeer);
@@ -88,7 +95,7 @@ class Connection {
 
 const parties: Record<string, Connection> = {};
 
-wss.on("connection", (ws, request) => {
+wss.on("connection", async (ws, request) => {
   const {socket} = request;
   const searchParams = new URLSearchParams(request.url.slice(1));
   const party = searchParams.get("party");
@@ -104,9 +111,34 @@ wss.on("connection", (ws, request) => {
     close("Both party and state are required");
     return;
   }
+
+  const authToken = searchParams.get("authToken");
+  const authProvider = searchParams.get("authProvider") as RelayAuthProvider;
+  if (Boolean(authProvider) !== Boolean(authToken)) {
+    close("The authProvider and authToken must be provided together or not at all");
+    return;
+  }
+  let verifiedEmail = "";
+  if (authProvider === "google") {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${authToken}`);
+    const json = await response.json();
+    if (json.aud === googleClientId) {
+      if (json.email_verified === "true") {
+        // eslint-disable-next-line prefer-destructuring
+        verifiedEmail = json.email;
+      }
+    } else {
+      close("Invalid client id");
+      return;
+    }
+  } else {
+    close("Invalid auth provider");
+    return;
+  }
+
   console.log(`Connected ${socket.remoteAddress}:${socket.remotePort} ${party} ${stateStr}`);
   const connection = parties[party] || new Connection();
-  const peer = connection.addPeer(state, ws);
+  const peer = connection.addPeer(state, ws, verifiedEmail);
   parties[party] = connection;
   cleanup = () => {
     connection.removePeer(peer);
