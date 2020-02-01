@@ -57,7 +57,6 @@ It may be obvious but needs to be said, **do not share the link with anyone you 
 
 This project was born out of frustration when trying to debug temporary build machines that you don't have the permission to SSH into or the ability to open ports. By outputting a link that can be seen on the build console, you can now quickly "SSH" into that machine and inspect it. If you find other great uses for this, let me know!
 
-# Similar Projects
-- https://github.com/yudai/gotty
-- https://github.com/inconshreveable/ngrok
-
+# Related Projects
+- https://github.com/yudai/gotty Share your terminal as a web application
+- https://github.com/inconshreveable/ngrok Introspected tunnels to localhost
