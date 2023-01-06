@@ -37,7 +37,7 @@
     "eslint": "^6.8.0",
     "favicons-webpack-plugin": "^1.0.2",
     "file-loader": "^5.0.2",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "openode": "^2.0.14",
     "pkg": "^4.4.2",
     "raw-loader": "^4.0.0",
